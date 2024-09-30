@@ -127,7 +127,7 @@ flatpickr("#data", {
   locale: "pt", // Define o idioma para português
   disableMobile: false // Desabilita a interface móvel otimizada
 });
-        const currencies = ['AED', 'AFN', 'ALL', 'AMD', 'ANG', 'AOA', 'ARS', 'AUD', 'AWG', 'AZN',
+const currencies = ['AED', 'AFN', 'ALL', 'AMD', 'ANG', 'AOA', 'ARS', 'AUD', 'AWG', 'AZN',
     'BAM', 'BBD', 'BDT', 'BGN', 'BHD', 'BIF', 'BMD', 'BND', 'BOB', 'BRL',
     'BSD', 'BTN', 'BWP', 'BYN', 'BZD', 'CAD', 'CDF', 'CHF', 'CLP', 'CNY',
     'COP', 'CRC', 'CUC', 'CUP', 'CVP', 'CZK', 'DJF', 'DKK', 'DOP', 'DZD',
@@ -145,98 +145,101 @@ flatpickr("#data", {
     'XAF', 'XAG', 'XAU', 'XCD', 'XDR', 'XOF', 'XPF', 'YER', 'ZAR', 'ZMW',
     'ZWL'];
 
-        function populateCurrencySelect() {
-            const select = document.getElementById('currencySelect');
-            currencies.forEach(currency => {
-                const option = document.createElement('option');
-                option.value = currency;
-                option.textContent = currency;
-                select.appendChild(option);
-            });
-        }
+const jafValueInUSD = 3.09; // 1 JAF vale 3.09 USD
 
-        async function fetchExchangeRates() {
-            const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
-            const data = await response.json();
-            return data.rates;
-        }
+function populateCurrencySelect() {
+    const select = document.getElementById('currencySelect');
+    currencies.forEach(currency => {
+        const option = document.createElement('option');
+        option.value = currency;
+        option.textContent = currency;
+        select.appendChild(option);
+    });
+}
 
-        async function renderChart(selectedCurrency) {
-            const rates = await fetchExchangeRates();
-            const values = currencies.map(currency => rates[currency]);
+async function fetchExchangeRates() {
+    const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+    const data = await response.json();
+    return data.rates;
+}
 
-            // Atualiza a anotação com o valor da moeda selecionada
-            const annotation = document.getElementById('chartAnnotation');
-            const value = rates[selectedCurrency];
-            annotation.textContent = `1 USD = ${new Intl.NumberFormat('en-US', { style: 'currency', currency: selectedCurrency }).format(value)} ${selectedCurrency}`;
+async function renderChart(selectedCurrency) {
+    const rates = await fetchExchangeRates();
+    // Converte os valores das taxas para o valor correspondente em JAF
+    const jafRates = currencies.map(currency => (rates[currency] ? rates[currency] * jafValueInUSD : null));
 
-            // Configura os dados do gráfico
-            const data = {
-                labels: currencies,
-                datasets: [{
-                    label: `Valor do Dólar em ${selectedCurrency}`,
-                    data: currencies.map(currency => (currency === selectedCurrency ? rates[currency] : null)),
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    fill: false,
-                    tension: 0.1
-                }]
-            };
+    // Atualiza a anotação com o valor da moeda selecionada
+    const annotation = document.getElementById('chartAnnotation');
+    const valueInJAF = jafRates[currencies.indexOf(selectedCurrency)];
+    annotation.textContent = `1 JAF = ${new Intl.NumberFormat('en-US', { style: 'currency', currency: selectedCurrency }).format(valueInJAF)} ${selectedCurrency}`;
 
-            // Configura o gráfico
-            const ctx = document.getElementById('exchangeChart').getContext('2d');
-            if (window.exchangeChart) {
-                window.exchangeChart.destroy();
-            }
+    // Configura os dados do gráfico
+    const data = {
+        labels: currencies,
+        datasets: [{
+            label: `Valor do JAF em ${selectedCurrency}`,
+            data: jafRates,
+            borderColor: 'rgba(75, 192, 192, 1)',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            fill: false,
+            tension: 0.1
+        }]
+    };
 
-            window.exchangeChart = new Chart(ctx, {
-                type: 'line',
-                data: data,
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false // Oculta a legenda
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `1 USD = ${context.raw} ${context.label}`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            display: true,
-                            title: {
-                                display: true,
-                                text: 'Moeda'
-                            }
-                        },
-                        y: {
-                            display: true,
-                            title: {
-                                display: true,
-                                text: 'Valor'
-                            },
-                            beginAtZero: true
+    // Configura o gráfico
+    const ctx = document.getElementById('exchangeChart').getContext('2d');
+    if (window.exchangeChart) {
+        window.exchangeChart.destroy();
+    }
+
+    window.exchangeChart = new Chart(ctx, {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false // Oculta a legenda
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `1 JAF = ${context.raw} ${context.label}`;
                         }
                     }
                 }
-            });
+            },
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Moeda'
+                    }
+                },
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Valor'
+                    },
+                    beginAtZero: true
+                }
+            }
         }
+    });
+}
 
-        async function init() {
-            populateCurrencySelect();
-            const select = document.getElementById('currencySelect');
-            select.addEventListener('change', (event) => {
-                renderChart(event.target.value);
-            });
-            // Definindo a moeda padrão para exibição inicial
-            const defaultCurrency = select.value || 'EUR';
-            select.value = defaultCurrency;
-            renderChart(defaultCurrency);
-        }
+async function init() {
+    populateCurrencySelect();
+    const select = document.getElementById('currencySelect');
+    select.addEventListener('change', (event) => {
+        renderChart(event.target.value);
+    });
+    // Definindo a moeda padrão para exibição inicial
+    const defaultCurrency = select.value || 'EUR';
+    select.value = defaultCurrency;
+    renderChart(defaultCurrency);
+}
 
-        init();
+init();
