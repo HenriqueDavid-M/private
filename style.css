@@ -16,8 +16,8 @@
    --bg-color: #000000;
    --second-bg-color: #1F1F1F;
    --text-color: #F8F8F8;
-   --main-color: #50AF95;
-   --second-main-color: #50AF95; 
+   --main-color: #ffb842;
+   --second-main-color: #ffb842; 
  }
 
  html{
@@ -82,7 +82,7 @@
  }
 
  .home-img img{
-    width:35vw ;
+    width:35vw;
     animation: floatImage 4s ease-in-out infinite;
  }
 
