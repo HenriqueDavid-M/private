@@ -145,7 +145,7 @@ const currencies = ['USD', 'AFN', 'ALL', 'AMD', 'ANG', 'AOA', 'ARS', 'AUD', 'AWG
     'XAF', 'XAG', 'XAU', 'XCD', 'XDR', 'XOF', 'XPF', 'YER', 'ZAR', 'ZMW',
     'ZWL'];
 
-const jafValueInUSD = 361.75; 
+const jafValueInUSD = 0.3343; 
 
 function populateCurrencySelect() {
     const select = document.getElementById('currencySelect');
