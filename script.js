@@ -272,3 +272,49 @@ function copyaddress(){
                 console.error("Error: ", err);
             });
 }
+
+function redirectcoinmarketcap() {
+    window.open("https://coinmarketcap.com/dexscan/pt-br/bsc/0x75dd5302bbe8a9eda9f5c1c5b3afac9d360c50e6/", "_blank"); // Substitua pela URL desejada
+}
+
+function redirectbscscan() {
+    window.open("https://bscscan.com/token/0xa8f2b85ec9c73c56e84ffff9486f8f162af1698e", "_blank"); // Substitua pela URL desejada
+}
+
+async function addMetaMask() {
+    const tokenAddress = '0xa8f2b85ec9c73c56e84ffff9486f8f162af1698e'; // Endereço do contrato do token
+    const tokenSymbol = 'JAF';     // Símbolo do token, como 'USDT'
+    const tokenDecimals = 18;      // Decimais do token, como 18 para muitos tokens ERC-20
+    const tokenImage = 'https://jafcoin.com/assets/JAF.png'; // URL da imagem do token (opcional)
+
+    try {
+        // Verifica se o MetaMask está instalado
+        if (typeof window.ethereum !== 'undefined') {
+            // Solicita a adição do token ao MetaMask
+            const wasAdded = await window.ethereum.request({
+                method: 'wallet_watchAsset',
+                params: {
+                    type: 'BEP20', // Tipo de token (ERC20 para tokens padrão)
+                    options: {
+                        address: tokenAddress,     // Endereço do contrato do token
+                        symbol: tokenSymbol,       // Símbolo do token (máximo de 11 caracteres)
+                        decimals: tokenDecimals,   // Decimais do token
+                        image: tokenImage          // URL da imagem (opcional)
+                    },
+                },
+            });
+
+            if (wasAdded) {
+                console.log('Token adicionado com sucesso!');
+                alert('Token adicionado ao MetaMask!');
+            } else {
+                console.log('Token não foi adicionado.');
+                alert('Token não foi adicionado.');
+            }
+        } else {
+            alert('MetaMask não está instalado!');
+        }
+    } catch (error) {
+        console.error('Erro ao adicionar o token:', error);
+    }
+}

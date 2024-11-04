@@ -320,6 +320,14 @@
    cursor: pointer;
 }
 
+.portfolio-layer button img{
+   height: 3rem; 
+   width: auto;
+   background-color: transparent;
+   color: var(--text-color);
+   cursor: pointer;
+}
+
 .portfolio-layer a{
    display: inline-flex;
    justify-content: center;
