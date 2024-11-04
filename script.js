@@ -145,7 +145,7 @@ const currencies = ['USD', 'AFN', 'ALL', 'AMD', 'ANG', 'AOA', 'ARS', 'AUD', 'AWG
     'XAF', 'XAG', 'XAU', 'XCD', 'XDR', 'XOF', 'XPF', 'YER', 'ZAR', 'ZMW',
     'ZWL'];
 
-const jafValueInUSD = 0.2625; // 1 JAF vale 3.09 USD
+const jafValueInUSD = 361.75; 
 
 function populateCurrencySelect() {
     const select = document.getElementById('currencySelect');
@@ -243,3 +243,32 @@ async function init() {
 }
 
 init();
+
+function abreviarContrato() {
+    const contratoElemento = document.querySelector(".contract-address");
+    const contratoCompleto = "0xA8f2B85ec9C73C56e84ffFF9486F8f162Af1698E";
+    
+    if (window.innerWidth <= 768) {
+        // Exibe os primeiros 6 e últimos 6 caracteres, com reticências no meio
+        contratoElemento.textContent = contratoCompleto.slice(0, 6) + "..." + contratoCompleto.slice(-6);
+    } else {
+        // Exibe o contrato completo em telas maiores
+        contratoElemento.textContent = contratoCompleto;
+    }
+}
+
+// Chama a função ao carregar a página e ao redimensionar a janela
+window.addEventListener("load", abreviarContrato);
+window.addEventListener("resize", abreviarContrato);
+
+function copyaddress(){
+    const textoElemento = document.getElementsByClassName("contract-address");
+            const texto = textoElemento.textContent;
+
+            // Usa a API de área de transferência para copiar o texto
+            navigator.clipboard.writeText(texto).then(() => {
+                alert("Copied!");
+            }).catch(err => {
+                console.error("Error: ", err);
+            });
+}
