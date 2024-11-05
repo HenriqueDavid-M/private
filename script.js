@@ -283,23 +283,19 @@ function redirectbscscan() {
 
 async function addMetaMask() {
     const tokenAddress = '0xa8f2b85ec9c73c56e84ffff9486f8f162af1698e'; // Endereço do contrato do token
-    const tokenSymbol = 'JAF';     // Símbolo do token, como 'USDT'
-    const tokenDecimals = 18;      // Decimais do token, como 18 para muitos tokens ERC-20
-    const tokenImage = 'https://jafcoin.com/assets/JAF.png'; // URL da imagem do token (opcional)
+    const tokenSymbol = 'JAF';     // Símbolo do token
+    const tokenDecimals = 18;      // Decimais do token
 
     try {
-        // Verifica se o MetaMask está instalado
         if (typeof window.ethereum !== 'undefined') {
-            // Solicita a adição do token ao MetaMask
             const wasAdded = await window.ethereum.request({
                 method: 'wallet_watchAsset',
                 params: {
-                    type: 'BEP20', // Tipo de token (ERC20 para tokens padrão)
+                    type: 'BEP20',
                     options: {
-                        address: tokenAddress,     // Endereço do contrato do token
-                        symbol: tokenSymbol,       // Símbolo do token (máximo de 11 caracteres)
-                        decimals: tokenDecimals,   // Decimais do token
-                        image: tokenImage          // URL da imagem (opcional)
+                        address: tokenAddress,
+                        symbol: tokenSymbol,
+                        decimals: tokenDecimals,
                     },
                 },
             });
@@ -315,6 +311,10 @@ async function addMetaMask() {
             alert('MetaMask não está instalado!');
         }
     } catch (error) {
-        console.error('Erro ao adicionar o token:', error);
+        if (error.code === -32602) {
+            alert('Esse token já está adicionado à sua carteira MetaMask!');
+        } else {
+            console.error('Erro ao adicionar o token:', error);
+        }
     }
 }
